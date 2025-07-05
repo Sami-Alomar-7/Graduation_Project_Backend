@@ -1,0 +1,44 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+
+# Virtual Environment
+venv/
+env/
+
+# Django
+*.log
+db.sqlite3
+/static/
+/media/
+.env
+
+# Local Django migrations
+*/migrations/*
+!*/migrations/__init__.py
+
+# IDEs
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Coverage Reports
+.coverage
+htmlcov/
+.coverage.*
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+logs/
+
+email_client_sender_creadintials.json
+
+get_gmail_refresh_token.py
+
+celerybeat-schedule
