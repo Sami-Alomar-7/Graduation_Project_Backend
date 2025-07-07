@@ -35,12 +35,16 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'channels',
     'gmailapi_backend',
+    'chunked_upload',
 ]
 
 LOCAL_APPS = [
     'authentication',
     'myadmin',
     'customer',
+    'books',
+    'store',
+    'chunked_uploads',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -157,3 +161,11 @@ GMAIL_API_CLIENT_SECRET = env('GMAIL_API_CLIENT_SECRET')
 GMAIL_API_REFRESH_TOKEN = env('GMAIL_API_REFRESH_TOKEN')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+
+# ClamAV settings
+CLAMD_HOST = env('CLAMD_HOST', default='localhost')
+CLAMD_PORT = env('CLAMD_PORT', default=3310)
+
+# Chunked upload settings
+CHUNKED_UPLOAD_ABSTRACT_MODEL = False
+CHUNKED_UPLOAD_MAX_BYTES = 50 * 1024 * 1024  # 50MB

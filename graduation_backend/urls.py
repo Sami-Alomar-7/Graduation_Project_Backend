@@ -22,7 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/v1/", include("authentication.urls.v1")),
-
+    path("api/v1/", include("books.urls.v1")),
+    path("api/v1/chunked-uploads/", include("chunked_uploads.urls")),
 ]
 
 if settings.DEBUG:

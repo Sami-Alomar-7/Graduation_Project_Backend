@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from rest_framework.response import Response
 from rest_framework import status
+
 class ResponseFormatter:
     
     @staticmethod
@@ -12,9 +13,11 @@ class ResponseFormatter:
         }
 
     @staticmethod
-    def format_success(data: any = None) -> dict:
+    def format_success(en: str, ar: str, data: any = None) -> dict:
         response = {
             "status": "success",
+            "en": str(en),
+            "ar": str(ar)
         }
         if data is not None:
             response["data"] = data
@@ -28,9 +31,9 @@ class ResponseFormatter:
         )
 
     @classmethod
-    def success_response(cls, data: any = None, status_code: int = 200) -> Response:
+    def success_response(cls, en: str, ar: str, data: any = None, status_code: int = 200) -> Response:
         return Response(
-            cls.format_success(data),
+            cls.format_success(en=en, ar=ar, data=data),
             status=status_code
         )
 
