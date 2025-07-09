@@ -26,6 +26,9 @@ echo "Running migrations in order..."
 run_migrations "authentication"
 run_migrations "myadmin"
 run_migrations "customer"
+run_migrations "books"
+run_migrations "chunked_uploads"
+run_migrations "store"
 
 # Final migration check
 echo "Running any remaining migrations..."

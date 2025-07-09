@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions, serializers
 from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
 from chunked_upload.exceptions import ChunkedUploadError
-from .models import BookChunkedUpload
+from chunked_uploads.models import BookChunkedUpload
 from books.models import Book
 from books.seializers.book_serializer import BookSerializer
 from store.models import Store

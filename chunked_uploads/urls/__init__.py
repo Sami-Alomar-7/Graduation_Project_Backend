@@ -1,1 +1,1 @@
-from .v1 import urlpatterns as v1_urls
+from .v1 import urlpatterns

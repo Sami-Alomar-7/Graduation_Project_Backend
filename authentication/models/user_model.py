@@ -36,10 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         CUSTOMER = "CUSTOMER", _("Customer")
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     email = models.EmailField(_("email address"), unique=True)
-    first_name = models.CharField(_("first name"), max_length=50)
-    last_name = models.CharField(_("last name"), max_length=50)
-    phone = models.CharField(_("phone number"), max_length=15, blank=True, null=True)
-    address = models.TextField(_("address"), blank=True, null=True)
+    username = models.CharField(_("username"), max_length=128)
     is_active = models.BooleanField(_("active"), default=False)
     is_staff = models.BooleanField(_("staff status"), default=False)
     date_joined = models.DateTimeField(_("date joined"), auto_now_add=True)
@@ -51,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     image = models.ImageField(_("image"), blank=True , null=True)
     objects = UserManager()
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+    REQUIRED_FIELDS = ["username"]
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")

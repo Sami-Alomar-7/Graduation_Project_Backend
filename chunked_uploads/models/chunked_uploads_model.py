@@ -26,9 +26,6 @@ class BookChunkedUpload(ChunkedUpload):
     """
     Custom chunked upload model for books with virus scanning
     """
-    # Override the user field to use our custom User model
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
     # Additional fields for book metadata
     title = models.CharField(max_length=255, blank=True)
     author = models.CharField(max_length=255, blank=True)

@@ -1,0 +1,3 @@
+FROM clamav/clamav:latest
+USER root
+ENTRYPOINT ["/bin/sh", "-c", "chown -R clamav:clamav /var/log/clamav /var/lib/clamav && /init"]

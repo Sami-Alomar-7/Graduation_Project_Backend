@@ -1,8 +1,8 @@
+version: '3.8'
+
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: samialomar7/graduation_project-app:latest
     command: ["/entrypoint-django.sh"]
     env_file:
       - .env
@@ -16,7 +16,6 @@ services:
       - db
       - clamav
     volumes:
-      - .:/app
       - static_volume:/app/static
       - media_volume:/app/media
     environment:
@@ -75,11 +74,9 @@ services:
       - redis_data:/data
 
   celery:
-    build: .
+    image: samialomar7/graduation_project-celery:latest
     env_file:
       - .env
-    volumes:
-      - .:/app 
     depends_on:
       - db
       - redis
@@ -96,7 +93,7 @@ services:
       - GMAIL_API_REFRESH_TOKEN=${GMAIL_API_REFRESH_TOKEN}
 
   flower:
-    build: .
+    image: samialomar7/graduation_project-flower:latest
     env_file:
       - .env
     ports:
@@ -116,9 +113,7 @@ services:
       - GMAIL_API_REFRESH_TOKEN=${GMAIL_API_REFRESH_TOKEN}
 
   clamav:
-    build:
-      context: .
-      dockerfile: Dockerfile.clamav
+    image: clamav/clamav:latest
     volumes:
       - ./nginx/clamd.conf:/etc/clamav/clamd.conf
       - clamav_data:/var/lib/clamav
@@ -133,4 +128,4 @@ volumes:
   media_volume:
   redis_data:
   clamav_data:
-  clamav_log:
+  clamav_log: 

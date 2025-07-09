@@ -83,6 +83,39 @@ docker-compose down
 docker-compose logs -f app
 ```
 
+## 🛠️ Production Setup for Teammates (Using Prebuilt Images)
+
+If you are a teammate and want to run the project using prebuilt Docker images (no need to build locally):
+
+1. **Get the .env file**
+   - Obtain the `.env` file from the backend team and place it in the project root.
+
+2. **Pull the latest images (optional but recommended)**
+   ```bash
+   docker-compose -f docker-compose.prod.yml pull
+   ```
+
+3. **Start all services**
+   ```bash
+   docker-compose -f docker-compose.prod.yml up
+   # Or run in background
+   docker-compose -f docker-compose.prod.yml up -d
+   ```
+
+4. **Stop all services**
+   ```bash
+   docker-compose -f docker-compose.prod.yml down
+   ```
+
+**Notes:**
+- This setup uses images published by the maintainer. You do not need to build any images locally.
+- Make sure your `.env` file is up to date and contains all required variables.
+- All services (API, Nginx, Celery, Flower, Redis, ClamAV, PgAdmin, Postgres) will be started as containers.
+- The backend will be available at:
+  - **API Base URL**: `http://localhost:8000`
+  - **Nginx Proxy**: `http://localhost/`
+  - **WebSocket**: `ws://localhost:8001`
+
 ## 🚀 Available Services
 
 Once running, you'll have access to:
