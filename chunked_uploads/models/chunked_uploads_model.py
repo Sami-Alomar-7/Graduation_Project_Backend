@@ -3,8 +3,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from chunked_upload.models import ChunkedUpload
 from books.models import Book
-from customer.models import Customer
-from myadmin.models import Admin
 import os
 
 User = get_user_model()

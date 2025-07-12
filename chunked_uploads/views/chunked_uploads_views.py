@@ -1,11 +1,9 @@
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import status, permissions, serializers
 from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
-from chunked_upload.exceptions import ChunkedUploadError
 from chunked_uploads.models import BookChunkedUpload
 from books.models import Book
-from books.seializers.book_serializer import BookSerializer
+from books.seializers.book_upload_serializer import BookUploadSerializer
 from store.models import Store
 from store.serializers.store_serializer import StoreSerializer
 from customer.models import Customer
@@ -128,7 +126,7 @@ class BookChunkedUploadCompleteView(ChunkedUploadCompleteView):
                 chunked_upload.save()
                 
                 return {
-                    'book': BookSerializer(book).data,
+                    'book': BookUploadSerializer(book).data,
                     'scan_result': scan_result
                 }
                 
@@ -152,7 +150,7 @@ class BookChunkedUploadCompleteView(ChunkedUploadCompleteView):
                 chunked_upload.save()
                 
                 return {
-                    'book': BookSerializer(book).data,
+                    'book': BookUploadSerializer(book).data,
                     'store': StoreSerializer(store_entry).data,
                     'scan_result': scan_result
                 }
@@ -199,31 +197,30 @@ class ChunkedUploadProgressView(APIView):
                 upload_id=upload_id,
                 user=request.user
             )
-            
-            progress_data = {
-                'upload_id': upload.upload_id,
-                'filename': upload.filename,
-                'offset': upload.offset,
-                'total_size': upload.total_size,
-                'status': upload.status,
-                'completed_at': upload.completed_at,
-                'is_scanned': upload.is_scanned,
-                'is_clean': upload.is_clean,
-                'scan_result': upload.scan_result,
-                'progress_percentage': (upload.offset / upload.total_size * 100) if upload.total_size > 0 else 0
-            }
-            
-            return ResponseFormatter.success_response(
-                en="Upload progress retrieved successfully",
-                ar="تم استرجاع تقدم التحميل بنجاح",
-                data=progress_data
-            )
-            
         except BookChunkedUpload.DoesNotExist:
             raise NotFoundError(
                 en_message="Upload not found",
                 ar_message="لم يتم العثور على التحميل"
             )
+        
+        progress_data = {
+            'upload_id': upload.upload_id,
+            'filename': upload.filename,
+            'offset': upload.offset,
+            'total_size': upload.total_size,
+            'status': upload.status,
+            'completed_at': upload.completed_at,
+            'is_scanned': upload.is_scanned,
+            'is_clean': upload.is_clean,
+            'scan_result': upload.scan_result,
+            'progress_percentage': (upload.offset / upload.total_size * 100) if upload.total_size > 0 else 0
+        }
+        
+        return ResponseFormatter.success_response(
+            en="Upload progress retrieved successfully",
+            ar="تم استرجاع تقدم التحميل بنجاح",
+            data=progress_data
+        )
 
 class ChunkedUploadStopView(APIView):
     """
@@ -237,28 +234,27 @@ class ChunkedUploadStopView(APIView):
                 upload_id=upload_id,
                 user=request.user
             )
-            
-            # Only allow stopping if upload is still in progress
-            if upload.status == 'uploading':
-                # Delete the upload and associated files
-                upload.delete()
-                
-                return ResponseFormatter.success_response(
-                    en="Upload stopped successfully",
-                    ar="تم إيقاف التحميل بنجاح",
-                    data={'upload_id': upload_id},
-                    status_code=status.HTTP_200_OK
-                )
-            else:
-                raise BadRequestError(
-                    en_message="Cannot stop completed or failed upload",
-                    ar_message="لا يمكن إيقاف التحميل المكتمل أو الفاشل"
-                )
-                
         except BookChunkedUpload.DoesNotExist:
             raise NotFoundError(
                 en_message="Upload not found",
                 ar_message="لم يتم العثور على التحميل"
+            )
+        
+        # Only allow stopping if upload is still in progress
+        if upload.status == 'uploading':
+            # Delete the upload and associated files
+            upload.delete()
+            
+            return ResponseFormatter.success_response(
+                en="Upload stopped successfully",
+                ar="تم إيقاف التحميل بنجاح",
+                data={'upload_id': upload_id},
+                status_code=status.HTTP_200_OK
+            )
+        else:
+            raise BadRequestError(
+                en_message="Cannot stop completed or failed upload",
+                ar_message="لا يمكن إيقاف التحميل المكتمل أو الفاشل"
             )
 
 class ChunkedUploadResumeView(APIView):
@@ -273,30 +269,29 @@ class ChunkedUploadResumeView(APIView):
                 upload_id=upload_id,
                 user=request.user
             )
-            
-            # Check if upload can be resumed
-            if upload.status == 'uploading' and upload.offset < upload.total_size:
-                resume_data = {
-                    'upload_id': upload.upload_id,
-                    'filename': upload.filename,
-                    'offset': upload.offset,
-                    'total_size': upload.total_size,
-                    'remaining_size': upload.total_size - upload.offset
-                }
-                
-                return ResponseFormatter.success_response(
-                    en="Upload can be resumed",
-                    ar="يمكن استئناف التحميل",
-                    data=resume_data
-                )
-            else:
-                raise BadRequestError(
-                    en_message="Upload cannot be resumed (already complete or failed)",
-                    ar_message="لا يمكن استئناف التحميل (مكتمل أو فاشل بالفعل)"
-                )
-                
         except BookChunkedUpload.DoesNotExist:
             raise NotFoundError(
                 en_message="Upload not found",
                 ar_message="لم يتم العثور على التحميل"
+            )
+        
+        # Check if upload can be resumed
+        if upload.status == 'uploading' and upload.offset < upload.total_size:
+            resume_data = {
+                'upload_id': upload.upload_id,
+                'filename': upload.filename,
+                'offset': upload.offset,
+                'total_size': upload.total_size,
+                'remaining_size': upload.total_size - upload.offset
+            }
+            
+            return ResponseFormatter.success_response(
+                en="Upload can be resumed",
+                ar="يمكن استئناف التحميل",
+                data=resume_data
+            )
+        else:
+            raise BadRequestError(
+                en_message="Upload cannot be resumed (already complete or failed)",
+                ar_message="لا يمكن استئناف التحميل (مكتمل أو فاشل بالفعل)"
             )

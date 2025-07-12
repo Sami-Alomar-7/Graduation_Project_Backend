@@ -18,18 +18,18 @@ def validate_file_extension(value):
 
 def validate_file_size(value):
     """
-    Validate file size (max 50MB)
+    Validate file size (max 10MB)
     """
-    max_size = 50 * 1024 * 1024  # 50MB in bytes
+    max_size = 10 * 1024 * 1024
     
     if value.size > max_size:
         raise serializers.ValidationError(
-            f'File size must be no more than 50MB. '
+            f'File size must be no more than 10MB. '
             f'Uploaded file size: {value.size / (1024*1024):.2f}MB'
         )
     return value
 
-class BookSerializer(serializers.ModelSerializer):
+class BookUploadSerializer(serializers.ModelSerializer):
     file = serializers.FileField(
         validators=[validate_file_extension, validate_file_size]
     )
