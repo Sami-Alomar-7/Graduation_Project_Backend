@@ -25,6 +25,8 @@ urlpatterns = [
     path("api/v1/", include("books.urls.v1")),
     path("api/v1/", include("store.urls.v1")),
     path("api/v1/chunked-uploads/", include("chunked_uploads.urls")),
+    path("api/v1/chunks/", include("chunks.urls")),
+    path("api/v1/profiles/", include("profiles.urls")),
 ]
 
 if settings.DEBUG:

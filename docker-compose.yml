@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["/entrypoint-django.sh"]
+    command: ["./entrypoint-django.sh"]
     env_file:
       - .env
     expose:
@@ -82,7 +82,7 @@ services:
     depends_on:
       - db
       - redis
-    command: ./entrypoint-celery.sh
+    command: ["./entrypoint-celery.sh"]
     environment:
       - DEBUG=${DEBUG}
       - DJANGO_ENV=${DJANGO_ENV}

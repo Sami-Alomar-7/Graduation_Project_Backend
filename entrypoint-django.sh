@@ -29,6 +29,8 @@ run_migrations "customer"
 run_migrations "books"
 run_migrations "chunked_uploads"
 run_migrations "store"
+run_migrations "chunks"
+run_migrations "profiles"
 
 # Final migration check
 echo "Running any remaining migrations..."

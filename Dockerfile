@@ -1,35 +1,44 @@
+# Use Python 3.11 slim image
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    python3-pip \
-    python3-setuptools \
-    python3-wheel \
-    python3-cffi \
-    libcairo2 \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
-    libgdk-pixbuf2.0-0 \
-    libffi-dev \
-    shared-mime-info \
-    && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+# Set work directory
 WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE 1
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    build-essential \
+    libpq-dev \
+    git \
+    curl \
+    wget \
+    unzip \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgcc-s1 \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV PYTHONUNBUFFERED 1  
-
-COPY . /app
-
-RUN pip install --no-cache-dir --upgrade pip
+# Install Python dependencies
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Patch django-chunked-upload for Django 5 compatibility
-RUN sed -i 's/from django.utils.translation import ugettext as _/from django.utils.translation import gettext as _/g' /usr/local/lib/python3.11/site-packages/chunked_upload/constants.py
+# Copy project
+COPY . /app/
 
-COPY entrypoint-django.sh /entrypoint-django.sh
-COPY entrypoint-celery.sh /entrypoint-celery.sh
-RUN chmod +x /entrypoint-django.sh 
-RUN chmod +x /entrypoint-celery.sh
+# Create necessary directories
+RUN mkdir -p /app/static /app/media /app/logs
+
+# Make entrypoint scripts executable
+RUN chmod +x /app/entrypoint-django.sh
+RUN chmod +x /app/entrypoint-celery.sh
+
+CMD ["/app/entrypoint-django.sh"]

@@ -14,6 +14,12 @@ from books.views.book_delete_views import (
     AdminBookDeleteView,
     CustomerBookDeleteView
 )
+from books.views.ai_processing_views import (
+    process_book_with_ai,
+    get_book_analysis_summary,
+    delete_book_analysis,
+    get_task_status
+)
 
 urlpatterns = [
     # Book upload endpoints
@@ -30,4 +36,10 @@ urlpatterns = [
     # Book deletion endpoints
     path('customer/books/<int:book_id>/delete/', CustomerBookDeleteView.as_view(), name='customer-book-delete'),
     path('admin/books/<int:book_id>/delete/', AdminBookDeleteView.as_view(), name='admin-book-delete'),
+    
+    # AI processing endpoints
+    path('books/<int:book_id>/process-ai/', process_book_with_ai, name='process-book-with-ai'),
+    path('books/<int:book_id>/analysis-summary/', get_book_analysis_summary, name='get-book-analysis-summary'),
+    path('books/<int:book_id>/delete-analysis/', delete_book_analysis, name='delete-book-analysis'),
+    path('tasks/<str:task_id>/status/', get_task_status, name='get-task-status'),
 ]
